@@ -23,20 +23,18 @@ const styles = StyleSheet.create({
 
 export default function TopNavBar() {
   return (
-    <Container>
-      <Header>
-        <Body>
-          <Title>Placeholder</Title>
-        </Body>
-        <Right>
-          <Button>
-            <Text>Pokémon</Text>
-          </Button>
-          <Button>
-            <Text>About</Text>
-          </Button>
-        </Right>
-      </Header>
-    </Container>
+    <Header>
+      <Body>
+        <Title>Placeholder</Title>
+      </Body>
+      <Right>
+        <Button>
+          <Text>Pokémon</Text>
+        </Button>
+        <Button>
+          <Text>About</Text>
+        </Button>
+      </Right>
+    </Header>
   );
 }
