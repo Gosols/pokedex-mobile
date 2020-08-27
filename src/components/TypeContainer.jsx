@@ -4,53 +4,26 @@ import { Text } from "native-base";
 export default function TypeContainer({ typelist }) {
   const types = typelist;
 
-  const defineColor = (type) => {
-    switch (type) {
-      case "grass":
-        return "#51b32b";
-
-      case "poison":
-        return "#779141";
-
-      case "fire":
-        return "#ff9633";
-
-      case "flying":
-        return "#ccc5a1";
-
-      case "normal":
-        return "#bdbcbb";
-
-      case "water":
-        return "#2365ba";
-
-      case "bug":
-        return "#bfbf58";
-
-      case "electric":
-        return "#f0e346";
-
-      case "ground":
-        return "#bd9c6c";
-
-      case "fairy":
-        return "#e3a6da";
-
-      case "fighting":
-        return "#b53333";
-
-      case "psychic":
-        return "#f25ab0";
-
-      case "rock":
-        return "#8c7338";
-
-      case "steel":
-        return "#cebeed";
-
-      default:
-        return "red";
-    }
+  const typeColors = {
+    grass: "#51b32b",
+    poison: "#975ab0",
+    fire: "#ff9633",
+    flying: "#ccc5a1",
+    normal: "#bdbcbb",
+    water: "#2365ba",
+    bug: "#bfbf58",
+    electric: "#f0e346",
+    ground: "#bd9c6c",
+    fairy: "#e3a6da",
+    fighting: "#b53333",
+    psychic: "#f25ab0",
+    rock: "#8c7338",
+    steel: "#cebeed",
+    ghost: "#8c659c",
+    ice: "#74cadb",
+    dragon: "#7f5ad6",
+    dark: "#635c4f",
+    "???": "#6d948b",
   };
 
   return (
@@ -59,7 +32,7 @@ export default function TypeContainer({ typelist }) {
         return (
           <Text
             style={{
-              backgroundColor: defineColor(type.type.name),
+              backgroundColor: typeColors[type.type.name],
               paddingHorizontal: 10,
               paddingVertical: 1,
               borderRadius: 100,
