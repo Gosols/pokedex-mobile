@@ -1,6 +1,14 @@
 import React from "react";
-import { Image } from "react-native";
-import { ListItem, Body, Text, Left, Right, Thumbnail } from "native-base";
+import TypeContainer from "./TypeContainer";
+import {
+  ListItem,
+  Body,
+  Text,
+  Left,
+  Right,
+  Thumbnail,
+  Content,
+} from "native-base";
 
 export default function PokemonListItem({ url }) {
   const [pokemondata, setData] = React.useState({});
@@ -22,7 +30,7 @@ export default function PokemonListItem({ url }) {
     return (
       <ListItem>
         <Body>
-          <Text>Loading pokemon</Text>
+          <Text>Waiting for Pokémon data...</Text>
         </Body>
       </ListItem>
     );
@@ -30,13 +38,29 @@ export default function PokemonListItem({ url }) {
     return (
       <ListItem>
         <Left>
-          <Thumbnail source={{ uri: pokemondata.sprites.front_default }} />
+          <Thumbnail
+            square
+            source={{ uri: pokemondata.sprites.front_default }}
+            style={{
+              marginRight: 10,
+              backgroundColor: "#ededed",
+              borderRadius: 100,
+            }}
+          />
+          <Text style={{ fontWeight: "bold" }}>
+            {pokemondata.name.charAt(0).toUpperCase() +
+              pokemondata.name.slice(1)}
+          </Text>
         </Left>
-        <Body>
-          <Text>{pokemondata.name}</Text>
+        <Body
+          style={{
+            alignItems: "flex-end",
+          }}
+        >
+          <TypeContainer typelist={pokemondata.types} />
         </Body>
         <Right>
-          <Text>{pokemondata.id}</Text>
+          <Text style={{ fontWeight: "bold" }}>#{pokemondata.id}</Text>
         </Right>
       </ListItem>
     );
