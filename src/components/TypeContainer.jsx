@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "native-base";
+import { Text } from "react-native";
 
 export default function TypeContainer({ typelist }) {
   const types = typelist;

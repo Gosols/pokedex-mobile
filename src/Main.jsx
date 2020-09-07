@@ -1,38 +1,38 @@
 import React from "react";
-import { Container } from "native-base";
-import { View, Platform, StyleSheet } from "react-native";
-import Constants from "expo-constants";
-import TopNavBar from "./components/TopNavBar";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import PokemonList from "./components/PokemonList";
 import AboutPage from "./components/About";
+import { StatusBar } from "expo-status-bar";
+import PokemonListItem from "./components/PokemonListItem";
+import SpeciesPage from "./components/SpeciesPage";
 
-const styles = StyleSheet.create({
-  container: {
-    display: "flex",
+//Needed for Routing
+const Stack = createStackNavigator();
+
+const headerOptions = {
+  headerStyle: {
+    backgroundColor: "#FF0000",
   },
-});
+  headerTintColor: "#fff",
+  headerTitleStyle: {
+    fontWeight: "bold",
+  },
+};
 
 export default function Main() {
-  const [ActiveComponent, setActive] = React.useState("PokémonList");
-
-  const ChangeActiveComponent = (value) => {
-    setActive(value);
-    console.log(ActiveComponent);
-  };
-
-  const CurrentComponent = (name) => {
-    if (name.localeCompare("PokémonList") == 0) {
-      return <PokemonList />;
-    }
-    if (name.localeCompare("About") == 0) {
-      return <AboutPage />;
-    }
-  };
-
   return (
-    <Container>
-      <TopNavBar callback={ChangeActiveComponent} />
-      {CurrentComponent(ActiveComponent)}
-    </Container>
+    <NavigationContainer>
+      <StatusBar backgroundColor="#FF0000" style="light" />
+      <Stack.Navigator
+        initialRouteName="Pokémon List"
+        screenOptions={headerOptions}
+      >
+        <Stack.Screen name="Pokémon List" component={PokemonList} />
+        <Stack.Screen name="About" component={AboutPage} />
+        <Stack.Screen name="ListItem" component={PokemonListItem} />
+        <Stack.Screen name="Pokémon Details" component={SpeciesPage} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }

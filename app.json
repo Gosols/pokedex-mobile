@@ -1,5 +1,9 @@
 {
   "expo": {
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#000"
+    },
     "name": "pokedex-mobile",
     "slug": "pokedex-mobile",
     "version": "1.0.0",
@@ -13,9 +17,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
