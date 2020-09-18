@@ -15,6 +15,16 @@ const styles = StyleSheet.create({
   types: {
     alignItems: "flex-end",
   },
+  container: {
+    display: "flex",
+    flexDirection: "row",
+    paddingVertical: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderRadius: 10,
+    width: 400,
+  },
 });
 
 export default function PokemonListItem({ url, navigation }) {
@@ -35,24 +45,32 @@ export default function PokemonListItem({ url, navigation }) {
 
   if (!dataReady) {
     return (
-      <View>
-        <Text>Waiting for Pokémon data...</Text>
+      <View style={styles.container}>
+        <View
+          style={{
+            marginLeft: 10,
+
+            flex: 2,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <Thumbnail square style={styles.thumbnail} />
+          <Text style={styles.text}>Loading Pokémon...</Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        ></View>
       </View>
     );
   } else {
     return (
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          paddingVertical: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          borderWidth: 1,
-          borderRadius: 10,
-          width: 400,
-        }}
-      >
+      <View style={styles.container}>
         <View
           style={{
             marginLeft: 10,
