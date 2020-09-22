@@ -27,9 +27,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function PokemonListItem({ url, navigation }) {
+export default function PokemonListItem({ url, navigation, Favorite }) {
   const [pokemondata, setData] = React.useState({});
   const [dataReady, setReady] = React.useState(false);
+  const [isFavorite, setFavorite] = React.useState(false);
 
   const getData = async () => {
     await fetch(url)
@@ -37,6 +38,10 @@ export default function PokemonListItem({ url, navigation }) {
       .then((data) => setData(data));
 
     setReady(true);
+  };
+
+  const favoriteStatus = (bool) => {
+    setFavorite(bool);
   };
 
   React.useEffect(() => {
@@ -75,7 +80,7 @@ export default function PokemonListItem({ url, navigation }) {
           style={{
             marginLeft: 10,
 
-            flex: 2,
+            flex: 1.5,
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
@@ -102,12 +107,19 @@ export default function PokemonListItem({ url, navigation }) {
         </View>
         <View
           style={{
-            flex: 0.5,
+            flex: 0.6,
             alignItems: "center",
             justifyContent: "center",
+            display: "flex",
+            flexDirection: "row",
           }}
         >
           <Text style={styles.text}>#{pokemondata.id}</Text>
+          <Favorite
+            pokemon={pokemondata}
+            isFav={isFavorite}
+            setFavorite={favoriteStatus}
+          />
         </View>
       </View>
     );

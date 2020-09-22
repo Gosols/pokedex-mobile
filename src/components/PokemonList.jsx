@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from "react";
+import { capitalize } from "./Capitalization";
 import {
   View,
   Text,
   FlatList,
   SafeAreaView,
   TouchableHighlight,
+  TouchableWithoutFeedback,
+  ToastAndroid,
 } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 import PokemonListItem from "./PokemonListItem";
 import { Button, Icon } from "native-base";
 
 export default function PokemonList({ navigation }) {
   const [listOfPokemon, setList] = useState([]);
   const [isLoaded, setLoaded] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+
+  //variables used for limiting the rendering to Gen I - III
   let limit = 151;
   let offset = 0;
-
   const [genII, setGenII] = useState(false);
   const [genIII, setGenIII] = useState(false);
 
@@ -31,6 +37,7 @@ export default function PokemonList({ navigation }) {
     setLoaded(true);
   };
 
+  //function used for rendering more pokemon once close to the end of the list
   const loadMore = () => {
     console.log("now limit is " + limit);
     if (!genII) {
@@ -47,6 +54,67 @@ export default function PokemonList({ navigation }) {
       getList();
     } else {
       return;
+    }
+  };
+
+  // add pokemon object to favorites -list
+  const addToFavorites = (pokemonObj) => {
+    const list = favorites;
+    list.push(pokemonObj);
+    setFavorites(list);
+  };
+
+  // function for showing the toast message
+  const showToast = (isFav, pokemon) => {
+    if (isFav) {
+      ToastAndroid.show(
+        `${capitalize(pokemon.name)} removed from favorites`,
+        ToastAndroid.SHORT
+      );
+    } else {
+      ToastAndroid.show(
+        `${capitalize(pokemon.name)} added to favorites`,
+        ToastAndroid.SHORT
+      );
+    }
+  };
+  // favorite button used in the list
+  const FavoriteButton = ({ pokemon, isFav, setFavorite }) => {
+    // if in favorites...
+    if (isFav) {
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            setFavorite(false);
+            showToast(isFav, pokemon);
+          }}
+        >
+          <AntDesign
+            color="#f5c842"
+            name="star"
+            size={25}
+            style={{ marginHorizontal: 10 }}
+          />
+        </TouchableWithoutFeedback>
+      );
+      // if not...
+    } else {
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            addToFavorites(pokemon);
+            setFavorite(true);
+            showToast(isFav, pokemon);
+          }}
+        >
+          <AntDesign
+            color="#f5c842"
+            name="staro"
+            size={25}
+            style={{ marginHorizontal: 10 }}
+          />
+        </TouchableWithoutFeedback>
+      );
     }
   };
 
@@ -77,7 +145,7 @@ export default function PokemonList({ navigation }) {
         });
       }}
     >
-      <PokemonListItem url={item.url} />
+      <PokemonListItem url={item.url} Favorite={FavoriteButton} />
     </TouchableHighlight>
   );
 
