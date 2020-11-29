@@ -1,8 +1,7 @@
 import React from "react";
 import TypeContainer from "./TypeContainer";
-import { StyleSheet, View, Text, TouchableHighlight } from "react-native";
-import { Thumbnail } from "native-base";
-import { NavigationContainer } from "@react-navigation/native";
+import { StyleSheet, View, Text } from "react-native";
+import { Thumbnail, Spinner } from "native-base";
 
 const styles = StyleSheet.create({
   text: {
@@ -27,26 +26,33 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function PokemonListItem({ url, navigation, Favorite }) {
+export default function PokemonListItem({ url, Favorite }) {
   const [pokemondata, setData] = React.useState({});
   const [dataReady, setReady] = React.useState(false);
   const [isFavorite, setFavorite] = React.useState(false);
-
-  const getData = async () => {
-    await fetch(url)
-      .then((res) => res.json())
-      .then((data) => setData(data));
-
-    setReady(true);
-  };
+  let isMounted;
 
   const favoriteStatus = (bool) => {
     setFavorite(bool);
   };
 
+  const getData = async (abortCtrl) => {
+    await fetch(url, { signal: abortCtrl.signal })
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    setReady(true);
+  };
+
   React.useEffect(() => {
-    getData();
-  }, []);
+    const abortCtrl = new AbortController();
+    getData(abortCtrl);
+  }, [dataReady]);
 
   if (!dataReady) {
     return (
@@ -55,13 +61,13 @@ export default function PokemonListItem({ url, navigation, Favorite }) {
           style={{
             marginLeft: 10,
 
-            flex: 2,
+            flex: 1.5,
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
           }}
         >
-          <Thumbnail square style={styles.thumbnail} />
+          <Spinner color="red" style={{ height: 56 }} />
           <Text style={styles.text}>Loading Pokémon...</Text>
         </View>
         <View
@@ -88,7 +94,9 @@ export default function PokemonListItem({ url, navigation, Favorite }) {
         >
           <Thumbnail
             square
-            source={{ uri: pokemondata.sprites.front_default }}
+            source={{
+              uri: pokemondata.sprites.other["official-artwork"].front_default,
+            }}
             style={styles.thumbnail}
           />
           <Text style={styles.text}>
@@ -115,10 +123,11 @@ export default function PokemonListItem({ url, navigation, Favorite }) {
           }}
         >
           <Text style={styles.text}>#{pokemondata.id}</Text>
+
           <Favorite
             pokemon={pokemondata}
             isFav={isFavorite}
-            setFavorite={favoriteStatus}
+            setFavorite={setFavorite}
           />
         </View>
       </View>

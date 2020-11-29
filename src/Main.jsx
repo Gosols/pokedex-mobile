@@ -5,7 +5,8 @@ import PokemonList from "./components/PokemonList";
 import AboutPage from "./components/About";
 import { StatusBar } from "expo-status-bar";
 import PokemonListItem from "./components/PokemonListItem";
-import SpeciesPage from "./components/SpeciesPage";
+import SpeciesPage from "./components/species-page/SpeciesPage";
+import FavoritesPage from "./components/FavoritesPage";
 
 //Needed for Routing
 const Stack = createStackNavigator();
@@ -32,6 +33,7 @@ export default function Main() {
         <Stack.Screen name="About" component={AboutPage} />
         <Stack.Screen name="ListItem" component={PokemonListItem} />
         <Stack.Screen name="Pokémon Details" component={SpeciesPage} />
+        <Stack.Screen name="Favorites" component={FavoritesPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );

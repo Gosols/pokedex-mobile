@@ -18,44 +18,28 @@ export default function PokemonList({ navigation }) {
   const [isLoaded, setLoaded] = useState(false);
   const [favorites, setFavorites] = useState([]);
 
+  let isMounted;
+
   //variables used for limiting the rendering to Gen I - III
-  let limit = 151;
-  let offset = 0;
-  const [genII, setGenII] = useState(false);
-  const [genIII, setGenIII] = useState(false);
+  let limit = 386;
 
   const getList = async () => {
-    await fetch(
-      `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
-    )
+    await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`)
       .then((res) => res.json())
       .then((data) => {
-        const updated = listOfPokemon.concat(data.results);
-        setList(updated);
+        if (isMounted) {
+          const updated = listOfPokemon.concat(data.results);
+          setList(updated);
+        }
       });
-
     setLoaded(true);
   };
 
-  //function used for rendering more pokemon once close to the end of the list
-  const loadMore = () => {
-    console.log("now limit is " + limit);
-    if (!genII) {
-      console.log("generating GEN 2");
-      offset = 151;
-      limit = 100;
-      setGenII(true);
-      getList();
-    } else if (!genIII) {
-      console.log("generating GEN 3");
-      offset = 251;
-      limit = 135;
-      setGenIII(true);
-      getList();
-    } else {
-      return;
-    }
-  };
+  useEffect(() => {
+    isMounted = true;
+    getList();
+    return () => (isMounted = false);
+  }, []);
 
   // add pokemon object to favorites -list
   const addToFavorites = (pokemonObj) => {
@@ -85,6 +69,16 @@ export default function PokemonList({ navigation }) {
       return (
         <TouchableWithoutFeedback
           onPress={() => {
+            let newList = [];
+            console.log(pokemon.name);
+            favorites.forEach((poke) => {
+              console.log(poke.name);
+              if (poke.name == pokemon.name) {
+              } else {
+                newList.push(poke);
+              }
+            });
+            setFavorites(newList);
             setFavorite(false);
             showToast(isFav, pokemon);
           }}
@@ -120,20 +114,29 @@ export default function PokemonList({ navigation }) {
 
   navigation.setOptions({
     headerRight: () => (
-      <Button
-        transparent
-        onPress={() => {
-          navigation.navigate("About");
-        }}
-      >
-        <Icon type="Feather" name="info" style={{ color: "#fff" }} />
-      </Button>
+      <View style={{ display: "flex", flexDirection: "row" }}>
+        <Button
+          transparent
+          onPress={() => {
+            navigation.navigate("Favorites", {
+              favorites: favorites,
+              navigation: navigation,
+            });
+          }}
+        >
+          <AntDesign color="white" name="star" size={25} />
+        </Button>
+        <Button
+          transparent
+          onPress={() => {
+            navigation.navigate("About");
+          }}
+        >
+          <Icon type="Feather" name="info" style={{ color: "#fff" }} />
+        </Button>
+      </View>
     ),
   });
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const renderItem = ({ item }) => (
     <TouchableHighlight
@@ -167,8 +170,6 @@ export default function PokemonList({ navigation }) {
           renderItem={renderItem}
           keyExtractor={(item) => item.name}
           ItemSeparatorComponent={separator}
-          onEndReached={loadMore}
-          onEndReachedThreshold={0}
         />
       </View>
     </SafeAreaView>

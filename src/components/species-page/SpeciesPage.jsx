@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { capitalize } from "./Capitalization";
-import { View, Text, Image, StyleSheet, FlatList } from "react-native";
-import TypeContainer from "./TypeContainer";
+import { capitalize } from "../Capitalization";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  FlatList,
+  ScrollView,
+} from "react-native";
+import TypeContainer from "../TypeContainer";
+import Modal from "react-native-modal";
+import { Spinner } from "native-base";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const styles = StyleSheet.create({
   topContainer: {
@@ -55,6 +65,7 @@ export default function SpeciesPage({ route, url = route.params.url }) {
   const [PData, setData] = useState([]);
   const [isReady, setReady] = useState(false);
   const [speciesData, setSpecies] = useState([]);
+  const [isModalActive, setModal] = useState(false);
 
   const getData = async () => {
     let species = "";
@@ -63,6 +74,7 @@ export default function SpeciesPage({ route, url = route.params.url }) {
       .then((res) => res.json())
       .then((data) => {
         setData(data);
+
         species = data.species.url;
       });
 
@@ -121,10 +133,18 @@ export default function SpeciesPage({ route, url = route.params.url }) {
     return (
       <View style={styles.topContainer}>
         <View style={{ display: "flex", flexDirection: "row" }}>
-          <Image
-            style={styles.image}
-            source={{ uri: PData.sprites.front_default }}
-          />
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setModal(true);
+            }}
+          >
+            <Image
+              style={styles.image}
+              source={{
+                uri: PData.sprites.other["official-artwork"].front_default,
+              }}
+            />
+          </TouchableWithoutFeedback>
         </View>
         <Text style={styles.name}>{capitalize(PData.name)}</Text>
         <LegendaryOrMythical />
@@ -194,16 +214,119 @@ export default function SpeciesPage({ route, url = route.params.url }) {
     );
   };
 
-  if (!isReady) {
+  const ModalComponent = () => {
+    return (
+      <Modal
+        isVisible={isModalActive}
+        onBackdropPress={() => {
+          setModal(false);
+        }}
+      >
+        <View style={{ alignSelf: "center" }}>
+          <Image
+            style={{ width: 260, height: 260 }}
+            source={{
+              uri: PData.sprites.other["official-artwork"].front_default,
+            }}
+          />
+        </View>
+      </Modal>
+    );
+  };
+
+  const DescCollection = () => {
     return (
       <View>
-        <Text>Loading...</Text>
+        <View
+          style={{
+            borderWidth: 1,
+            borderRadius: 10,
+            padding: 5,
+            marginHorizontal: 2,
+          }}
+        >
+          <Text style={styles.header}>Collection of Descriptions ⇅</Text>
+          <FlatList
+            style={{ height: 110 }}
+            data={speciesData.flavor_text_entries}
+            renderItem={description}
+            keyExtractor={(item, i) => i.toString()}
+          />
+        </View>
+      </View>
+    );
+  };
+
+  const SpritesCollection = () => {
+    const sprites = [
+      PData.sprites.versions["generation-i"]["red-blue"].front_default,
+      PData.sprites.versions["generation-i"]["yellow"].front_default,
+      PData.sprites.versions["generation-ii"]["crystal"].front_default,
+      PData.sprites.versions["generation-ii"]["gold"].front_default,
+      PData.sprites.versions["generation-ii"]["silver"].front_default,
+      PData.sprites.versions["generation-iii"]["emerald"].front_default,
+      PData.sprites.versions["generation-iii"]["firered-leafgreen"]
+        .front_default,
+      PData.sprites.versions["generation-iii"]["ruby-sapphire"].front_default,
+      PData.sprites.versions["generation-iv"]["diamond-pearl"].front_default,
+      PData.sprites.versions["generation-iv"]["heartgold-soulsilver"]
+        .front_default,
+      PData.sprites.versions["generation-iv"]["platinum"].front_default,
+      PData.sprites.versions["generation-v"]["black-white"].front_default,
+      PData.sprites.versions["generation-v"]["black-white"].front_default,
+      PData.sprites.versions["generation-vi"]["omegaruby-alphasapphire"]
+        .front_default,
+      PData.sprites.versions["generation-vi"]["x-y"].front_default,
+      PData.sprites.versions["generation-vii"]["icons"].front_default,
+      PData.sprites.versions["generation-vii"]["ultra-sun-ultra-moon"]
+        .front_default,
+      PData.sprites.versions["generation-viii"]["icons"].front_default,
+    ];
+    return (
+      <View>
+        <View
+          style={{
+            borderWidth: 1,
+            borderRadius: 10,
+            padding: 5,
+            marginHorizontal: 2,
+            marginTop: 5,
+          }}
+        >
+          <Text style={styles.header}>Sprites ⇆</Text>
+          <FlatList
+            style={{ height: 150 }}
+            data={sprites}
+            renderItem={({ item }) => {
+              if (item == null) {
+                return;
+              }
+              return (
+                <Image
+                  source={{ uri: item }}
+                  style={{ width: 150, height: 150, borderRadius: 10 }}
+                />
+              );
+            }}
+            keyExtractor={(item, i) => i.toString()}
+            horizontal={true}
+          />
+        </View>
+      </View>
+    );
+  };
+  if (!isReady) {
+    return (
+      <View style={{ margin: "auto" }}>
+        <Spinner color="red" size="large" />
+        <Text style={{ textAlign: "center" }}>Loading Pokémon Data...</Text>
       </View>
     );
   }
 
   return (
     <View>
+      <ModalComponent />
       <View style={{ height: 1, backgroundColor: "black" }}></View>
       <TopContainer />
       <View style={{ marginHorizontal: 5 }}>
@@ -216,24 +339,8 @@ export default function SpeciesPage({ route, url = route.params.url }) {
           <StatsContainer />
           <AbilitiesAndMoves />
         </View>
-        <View>
-          <View
-            style={{
-              borderWidth: 1,
-              borderRadius: 10,
-              padding: 5,
-              marginHorizontal: 2,
-            }}
-          >
-            <Text style={styles.header}>Collection of Descriptions ⇅</Text>
-            <FlatList
-              style={{ height: 150 }}
-              data={speciesData.flavor_text_entries}
-              renderItem={description}
-              keyExtractor={(item, i) => i.toString()}
-            />
-          </View>
-        </View>
+        <DescCollection />
+        <SpritesCollection />
       </View>
     </View>
   );
