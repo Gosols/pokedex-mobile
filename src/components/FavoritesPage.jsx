@@ -14,10 +14,11 @@ export default function FavoritesPage({
   favorites = route.params.favorites,
   navigation,
 }) {
+  // an individual list item
   const renderItem = ({ item }) => {
-    console.log(item.url);
     return (
       <TouchableHighlight
+        style={{ borderRadius: 10, margin: 5 }}
         underlayColor="#ffc3c2"
         onPress={() => {
           navigation.navigate("Pokémon Details", {
@@ -30,7 +31,6 @@ export default function FavoritesPage({
             alignContent: "center",
             borderWidth: 1,
             borderRadius: 10,
-            margin: 5,
           }}
         >
           <Thumbnail
@@ -45,18 +45,37 @@ export default function FavoritesPage({
       </TouchableHighlight>
     );
   };
+  // if there are no favorites, do something else.
+  const RenderConditions = () => {
+    if (favorites.length < 1) {
+      return (
+        <View style={{}}>
+          <Text
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              marginTop: 10,
+            }}
+          >
+            You have no favorites.
+          </Text>
+        </View>
+      );
+    }
+    return (
+      <SafeAreaView>
+        <View style={{ height: 1, backgroundColor: "black" }}></View>
+        <View style={{ alignItems: "center" }}>
+          <FlatList
+            data={favorites}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.name}
+            numColumns={3}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  };
 
-  return (
-    <SafeAreaView>
-      <View style={{ height: 1, backgroundColor: "black" }}></View>
-      <View style={{ alignItems: "center" }}>
-        <FlatList
-          data={favorites}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.name}
-          numColumns={3}
-        />
-      </View>
-    </SafeAreaView>
-  );
+  return <RenderConditions />;
 }

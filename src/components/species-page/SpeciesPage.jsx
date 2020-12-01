@@ -67,6 +67,7 @@ export default function SpeciesPage({ route, url = route.params.url }) {
   const [speciesData, setSpecies] = useState([]);
   const [isModalActive, setModal] = useState(false);
 
+  // data fetching function
   const getData = async () => {
     let species = "";
 
@@ -91,11 +92,13 @@ export default function SpeciesPage({ route, url = route.params.url }) {
     getData();
   }, []);
 
+  // list item for moves
   const renderItem = ({ item }) => {
     return <Text style={{ fontSize: 14 }}>{capitalize(item.move.name)}</Text>;
   };
-
+  // list item for descriptions.
   const description = ({ item }) => {
+    // only render english descriptions
     if (item.language.name == "en") {
       return (
         <View>
@@ -109,7 +112,7 @@ export default function SpeciesPage({ route, url = route.params.url }) {
       return null;
     }
   };
-
+  // checks if a pokemon is legendary or mythical
   const LegendaryOrMythical = () => {
     if (speciesData.is_legendary) {
       return (
@@ -129,6 +132,8 @@ export default function SpeciesPage({ route, url = route.params.url }) {
     return <View></View>;
   };
 
+  // individual page components in their own respective consts
+  // ---------------------------------------------------------
   const TopContainer = () => {
     return (
       <View style={styles.topContainer}>
@@ -213,7 +218,7 @@ export default function SpeciesPage({ route, url = route.params.url }) {
       </View>
     );
   };
-
+  // component for zooming the image of a pokemon
   const ModalComponent = () => {
     return (
       <Modal
@@ -274,12 +279,7 @@ export default function SpeciesPage({ route, url = route.params.url }) {
       PData.sprites.versions["generation-iv"]["platinum"].front_default,
       PData.sprites.versions["generation-v"]["black-white"].front_default,
       PData.sprites.versions["generation-v"]["black-white"].front_default,
-      PData.sprites.versions["generation-vi"]["omegaruby-alphasapphire"]
-        .front_default,
-      PData.sprites.versions["generation-vi"]["x-y"].front_default,
       PData.sprites.versions["generation-vii"]["icons"].front_default,
-      PData.sprites.versions["generation-vii"]["ultra-sun-ultra-moon"]
-        .front_default,
       PData.sprites.versions["generation-viii"]["icons"].front_default,
     ];
     return (
@@ -315,6 +315,7 @@ export default function SpeciesPage({ route, url = route.params.url }) {
       </View>
     );
   };
+  // if page is not finished loading...
   if (!isReady) {
     return (
       <View style={{ margin: "auto" }}>

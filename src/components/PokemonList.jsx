@@ -18,13 +18,11 @@ export default function PokemonList({ navigation }) {
   const [isLoaded, setLoaded] = useState(false);
   const [favorites, setFavorites] = useState([]);
 
-  let isMounted;
+  let isMounted = true; // boolean for component mounting
 
-  //variables used for limiting the rendering to Gen I - III
-  let limit = 386;
-
+  // data fetching...
   const getList = async () => {
-    await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`)
+    await fetch(`https://pokeapi.co/api/v2/pokemon?limit=386`)
       .then((res) => res.json())
       .then((data) => {
         if (isMounted) {
@@ -36,7 +34,6 @@ export default function PokemonList({ navigation }) {
   };
 
   useEffect(() => {
-    isMounted = true;
     getList();
     return () => (isMounted = false);
   }, []);
@@ -111,7 +108,8 @@ export default function PokemonList({ navigation }) {
       );
     }
   };
-
+  // function for stack navigation functionalities
+  // basically forms the top banner of the component
   navigation.setOptions({
     headerRight: () => (
       <View style={{ display: "flex", flexDirection: "row" }}>
@@ -120,7 +118,6 @@ export default function PokemonList({ navigation }) {
           onPress={() => {
             navigation.navigate("Favorites", {
               favorites: favorites,
-              navigation: navigation,
             });
           }}
         >
@@ -138,6 +135,7 @@ export default function PokemonList({ navigation }) {
     ),
   });
 
+  // individual item for the pokemon list
   const renderItem = ({ item }) => (
     <TouchableHighlight
       style={{ borderRadius: 10 }}
@@ -152,8 +150,10 @@ export default function PokemonList({ navigation }) {
     </TouchableHighlight>
   );
 
+  // list item separator
   const separator = () => <View style={{ height: 5 }}></View>;
 
+  // if component is not loaded yet...
   if (!isLoaded) {
     return (
       <View>

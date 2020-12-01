@@ -30,30 +30,23 @@ export default function PokemonListItem({ url, Favorite }) {
   const [pokemondata, setData] = React.useState({});
   const [dataReady, setReady] = React.useState(false);
   const [isFavorite, setFavorite] = React.useState(false);
-  let isMounted;
 
-  const favoriteStatus = (bool) => {
-    setFavorite(bool);
-  };
-
-  const getData = async (abortCtrl) => {
-    await fetch(url, { signal: abortCtrl.signal })
+  // data fetching function
+  const getData = async () => {
+    await fetch(url)
       .then((res) => res.json())
       .then((data) => {
         setData(data);
-      })
-      .catch((err) => {
-        console.log(err);
       });
 
     setReady(true);
   };
 
   React.useEffect(() => {
-    const abortCtrl = new AbortController();
-    getData(abortCtrl);
-  }, [dataReady]);
+    getData();
+  }, []);
 
+  // if data is done loading...
   if (!dataReady) {
     return (
       <View style={styles.container}>
